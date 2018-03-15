@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.example.com.squawker.MainActivity;
 import android.example.com.squawker.R;
+import android.example.com.squawker.provider.SquawkContract;
 import android.example.com.squawker.provider.SquawkProvider;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -30,11 +31,13 @@ public class SquakwFirebaseMessagingService extends FirebaseMessagingService {
     private static final int SQUAWK_MESSAGE_NOTIFICATION_ID = 541;
     private static final int SQUAWK_PENDING_INTENT_ID = 148;
 
+
+
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Map<String, String> data = remoteMessage.getData();
 
-        if (data != null) {
+        if (data.size() > 0) {
             String author = data.get("author");
             String message = data.get("message");
             String date = data.get("date");
@@ -45,10 +48,10 @@ public class SquakwFirebaseMessagingService extends FirebaseMessagingService {
             if (date == null || autorKey == null || author == null || message == null) return;
 
             ContentValues cv = new ContentValues();
-            cv.put("author", author);
-            cv.put("message", message);
-            cv.put("date", Long.parseLong(date));
-            cv.put("authorKey", autorKey);
+            cv.put(SquawkContract.COLUMN_AUTHOR, author);
+            cv.put(SquawkContract.COLUMN_MESSAGE, message);
+            cv.put(SquawkContract.COLUMN_DATE, Long.parseLong(date));
+            cv.put(SquawkContract.COLUMN_AUTHOR_KEY, autorKey);
             saveIntoDb(cv);
         }
     }
